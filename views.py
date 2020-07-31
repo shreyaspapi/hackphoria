@@ -98,20 +98,21 @@ def inputstream():
 
 @app.route('/out', methods=['POST'])
 def outputstream():
-    if request.method == 'POST':
-        file = request.files['webcam']
-        if file:
-            try:
-                person_found = find_person(file.read())
-                print(f'{person_found} checked out!')
-                print('Total cost = Rs. 37')
-                user = User.get_by_username(person_found)
-                user.balance = user.balance - 37
-                db.session.add(user)
-                db.session.commit()
-                print(f'New Balance: {user.balance}')
-            except:
-                pass
-            return 'OK', 200
-        else:
-            return 'NOT OK', 500
+    if request.method != 'POST':
+        return
+    file = request.files['webcam']
+    if file:
+        try:
+            person_found = find_person(file.read())
+            print(f'{person_found} checked out!')
+            print('Total cost = Rs. 37')
+            user = User.get_by_username(person_found)
+            user.balance = user.balance - 37
+            db.session.add(user)
+            db.session.commit()
+            print(f'New Balance: {user.balance}')
+        except:
+            pass
+        return 'OK', 200
+    else:
+        return 'NOT OK', 500
